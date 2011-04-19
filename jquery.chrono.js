@@ -72,8 +72,8 @@ var jQueryChrono = (function() {
         $.error("jQuery.after and jQuery.every expect a numerical first argument");
       }
       
-      // strips the number (possibly negative and/or not a whole number)
-      units = arguments[0].replace(/-?\d+(\.\d+)?/, '');
+      // strips the number, in case there are units following it
+      units = arguments[0].replace(delay, '');
       if (units === "") { // this argument is just digits
         units = null;
       } else if (!valid_units[units]) {
