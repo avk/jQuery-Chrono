@@ -29,6 +29,43 @@ $(function() {
     equals(jQueryChrono.defaults.units, "milliseconds");
   });
   
+  module("units");
+  
+  test("must recognize milliseconds", function() {
+    var units = ["millisecond", "milliseconds", "ms"];
+    $.each(units, function(i, unit) {
+      ok(jQueryChrono.valid_units[unit], "recognizes " + unit);
+    });
+  });
+  
+  test("must recognize seconds", function() {
+    var units = ["second", "seconds", "sec", "secs", "s"];
+    $.each(units, function(i, unit) {
+      ok(jQueryChrono.valid_units[unit], "recognizes " + unit);
+    });
+  });
+  
+  test("must recognize minutes", function() {
+    var units = ["minute", "minutes", "min", "mins", "m"];
+    $.each(units, function(i, unit) {
+      ok(jQueryChrono.valid_units[unit], "recognizes " + unit);
+    });
+  });
+  
+  test("must recognize hours", function() {
+    var units = ["hour", "hours", "hr", "hrs", "h"];
+    $.each(units, function(i, unit) {
+      ok(jQueryChrono.valid_units[unit], "recognizes " + unit);
+    });
+  });
+  
+  test("must recognize days", function() {
+    var units = ["day", "days", "d"];
+    $.each(units, function(i, unit) {
+      ok(jQueryChrono.valid_units[unit], "recognizes " + unit);
+    });
+  });
+  
   module("create_timer return values", {
     setup : function() {
       this.stub_timer = jQueryChrono.create_timer(jQueryChrono.defaults.delay, 

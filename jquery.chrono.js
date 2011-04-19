@@ -19,9 +19,41 @@
 // Testable namespace for helpers
 var jQueryChrono = (function() {
   var defaults = {
-    delay: 4, // https://developer.mozilla.org/en/window.setTimeout#Minimum_delay_and_timeout_nesting
-    units: "milliseconds"
-  }
+        delay: 4, // https://developer.mozilla.org/en/window.setTimeout#Minimum_delay_and_timeout_nesting
+        units: "milliseconds"
+      },
+      ms  = 1,
+      sec = ms  * 1000,
+      min = sec * 60,
+      hr  = min * 60,
+      day = hr  * 24,
+      valid_units = {
+        "millisecond" : ms,
+        "milliseconds": ms,
+        "ms"          : ms,
+        
+        "second"      : sec,
+        "seconds"     : sec,
+        "sec"         : sec,
+        "secs"        : sec,
+        "s"           : sec,
+        
+        "minute"      : min,
+        "minutes"     : min,
+        "min"         : min,
+        "mins"        : min,
+        "m"           : min,
+        
+        "hour"        : hr,
+        "hours"       : hr,
+        "hr"          : hr,
+        "hrs"         : hr,
+        "h"           : hr,
+        
+        "day"         : day,
+        "days"        : day,
+        "d"           : day
+      }
   
   function create_timer() {
     var delay = null, units = null, closure = $.noop;
@@ -57,6 +89,7 @@ var jQueryChrono = (function() {
   
   return {
     defaults : defaults,
+    valid_units : valid_units,
     create_timer : create_timer
   }
 })();
