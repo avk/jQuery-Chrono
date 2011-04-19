@@ -160,23 +160,37 @@ $(function() {
     });
   });
   
-  test("if a number, it can't be less than the default delay", function() {
-    var timer = jQueryChrono.create_timer(-7, $.noop);
-    strictEqual(timer.when, jQueryChrono.defaults.delay);
-  });
-  
-  test("if a string, it must contain a number >= the default delay", function() {
+  test("if numerical argument <= the default delay, return default delay", function() {
     var timer;
+    timer = jQueryChrono.create_timer(1, $.noop);
+    strictEqual(timer.when, jQueryChrono.defaults.delay);
     
-    raises(function() {
-      jQueryChrono.create_timer("abc", $.noop);
-    });
+    timer = jQueryChrono.create_timer(-7, $.noop);
+    strictEqual(timer.when, jQueryChrono.defaults.delay);
+    
+    timer = jQueryChrono.create_timer(-50.2, $.noop);
+    strictEqual(timer.when, jQueryChrono.defaults.delay);
     
     timer = jQueryChrono.create_timer("-37", $.noop);
     strictEqual(timer.when, jQueryChrono.defaults.delay);
     
     timer = jQueryChrono.create_timer("-50ms", $.noop);
     strictEqual(timer.when, jQueryChrono.defaults.delay);
+  });
+  
+  test("if a string, it must start with a number", function() {
+    raises(function() {
+      jQueryChrono.create_timer("abc", $.noop);
+    });
+    
+    raises(function() {
+      jQueryChrono.create_timer("x50x", $.noop);
+    });
+    
+    doesNotRaise(function() {
+      jQueryChrono.create_timer("50", $.noop);
+      jQueryChrono.create_timer("-49.2ms", $.noop);
+    });
   });
   
   test("if a stringified number, it must use the default time unit", function() {
