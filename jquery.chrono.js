@@ -71,6 +71,12 @@ var jQueryChrono = (function() {
       if (isNaN(delay)) {
         $.error("jQuery.after and jQuery.every expect a numerical first argument");
       }
+      
+      // strips the number (possibly negative and/or not a whole number)
+      units = arguments[0].replace(/-?\d+(\.\d+)?/, '');
+      if (units !== "" && !valid_units[units]) {
+        $.error("jQuery.after and jQuery.every expect a valid time unit argument (e.g. ms, sec, etc.)");
+      }
     } else {
       $.error("jQuery.after and jQuery.every expect a numerical first argument");
     }

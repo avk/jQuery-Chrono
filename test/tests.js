@@ -167,4 +167,19 @@ $(function() {
     strictEqual(timer.when / 1, parseFloat(delay, 10), "accepts floats in strings");
   });
   
+  test("if first argument is a stringified number, it must use the default time unit", function() {
+    var delay = "8", timer = jQueryChrono.create_timer(delay, $.noop);
+    strictEqual(timer.when / parseInt(delay, 10), 1);
+  });
+  
+  test("if first argument is a string with non-numerical characters, it must contain a valid time unit", function() {
+    raises(function() {
+      jQueryChrono.create_timer("6xxx", $.noop);
+    });
+    
+    doesNotRaise(function() {
+      jQueryChrono.create_timer("9sec", $.noop);
+    });
+  });
+  
 });
