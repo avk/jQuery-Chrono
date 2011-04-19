@@ -78,9 +78,8 @@ $(function() {
     ok($.isFunction(this.stub_timer.callback));
   });
   
-  test("returns a number for 'when' the timer should run, that's > the default", function() {
+  test("returns a number for 'when' the timer should run", function() {
     strictEqual(typeof this.stub_timer.when, "number");
-    ok(this.stub_timer.when >= jQueryChrono.defaults.delay);
   });
   
   test("numerical argument must be a factor of the 'when' returned value", function() {
@@ -191,11 +190,6 @@ $(function() {
       jQueryChrono.create_timer("50", $.noop);
       jQueryChrono.create_timer("-49.2ms", $.noop);
     });
-  });
-  
-  test("if a stringified number, it must use the default time unit", function() {
-    var delay = "8", timer = jQueryChrono.create_timer(delay, $.noop);
-    strictEqual(timer.when / parseInt(delay, 10), 1);
   });
   
   test("if a string with non-numerical characters, it must contain a valid time unit", function() {
