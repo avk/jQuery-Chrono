@@ -1,4 +1,12 @@
 $(function() {
+  function doesNotRaise(callback, message) {
+    function StubError() {};
+    raises(function() {
+      callback();
+      throw new StubError();
+    }, StubError, message);
+  }
+  
   module("public interface");
   
   test("$.after is a valid function", function() {
@@ -29,11 +37,11 @@ $(function() {
     }
   });
   
-  test("expects a callback function", function() {
+  test("expects a 'callback' function", function() {
     ok($.isFunction(this.stub_timer.callback));
   });
   
-  test("expects a number for when the timer should run, that's > the default", function() {
+  test("expects a number for 'when' the timer should run, that's > the default", function() {
     strictEqual(typeof this.stub_timer.when, "number");
     ok(this.stub_timer.when >= jQueryChrono.defaults.delay);
   });
@@ -49,19 +57,77 @@ $(function() {
       jQueryChrono.create_timer(50);
     }, "cannot accept 1 argument");
 
-    function StubError() {};
-    raises(function() {
+    doesNotRaise(function() {
       jQueryChrono.create_timer(50, $.noop);
-      throw new StubError();
-    }, StubError, "can accept 2 arguments");
+    }, "can accept 2 arguments");
 
-    raises(function() {
+    doesNotRaise(function() {
       jQueryChrono.create_timer(50, "ms", $.noop);
-      throw new StubError();
-    }, StubError, "can accept 3 arguments");
+    }, "can accept 3 arguments");
 
     raises(function() {
       jQueryChrono.create_timer(50, "ms", $.noop, $.noop);
     }, "cannot accept > 3 arguments");
   });
+  
+  test("first argument must be a number or a string", function() {
+    raises(function() {
+      jQueryChrono.create_timer($.noop, $.noop);
+    });
+    
+    raises(function() {
+      jQueryChrono.create_timer(true, $.noop);
+    });
+    
+    doesNotRaise(function() {
+      jQueryChrono.create_timer(50, $.noop);
+      jQueryChrono.create_timer(50.2, $.noop);
+    });
+    
+    doesNotRaise(function() {
+      jQueryChrono.create_timer("50", $.noop);
+      jQueryChrono.create_timer("50.2", $.noop);
+      jQueryChrono.create_timer("50.2ms", $.noop);
+    });
+  });
+  
+  test("if first argument is a number, it can't be less than default", function() {
+    var timer = jQueryChrono.create_timer(-7, $.noop);
+    strictEqual(timer.when, jQueryChrono.defaults.delay);
+  });
+  
+  test("if first argument is a string, it must contain a number >= the default", function() {
+    var timer;
+    
+    raises(function() {
+      jQueryChrono.create_timer("abc", $.noop);
+    });
+    
+    timer = jQueryChrono.create_timer("-37", $.noop);
+    strictEqual(timer.when, jQueryChrono.defaults.delay);
+    
+    timer = jQueryChrono.create_timer("-50ms", $.noop);
+    strictEqual(timer.when, jQueryChrono.defaults.delay);
+  });
+  
+  test("first argument must be a factor of the 'when' returned value", function() {
+    var delay, timer;
+    
+    delay = 27;
+    timer = jQueryChrono.create_timer(delay, "ms", $.noop);
+    strictEqual(timer.when % delay, 0, "accepts integers");
+    
+    delay = 57.5;
+    timer = jQueryChrono.create_timer(delay, "ms", $.noop);
+    strictEqual(timer.when / 1, delay, "accepts floats");
+    
+    delay = "27";
+    timer = jQueryChrono.create_timer(delay + "ms", $.noop);
+    strictEqual(timer.when % parseInt(delay, 10), 0, "accepts integers in strings");
+    
+    delay = "57.5";
+    timer = jQueryChrono.create_timer(delay + "ms", $.noop);
+    strictEqual(timer.when / 1, parseFloat(delay, 10), "accepts floats in strings");
+  });
+  
 });
