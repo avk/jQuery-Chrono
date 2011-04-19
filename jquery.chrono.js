@@ -24,6 +24,10 @@ var jQueryChrono = (function() {
   }
   
   function create_timer() {
+    if (arguments.length < 2 || arguments.length > 3) {
+      $.error("jQuery.after and jQuery.every expect at least 2 and at most 3 arguments");
+    }
+    
     return {
       when : defaults.delay,
       callback : $.noop

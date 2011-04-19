@@ -21,18 +21,47 @@ $(function() {
     equals(jQueryChrono.defaults.units, "milliseconds");
   });
   
-  module("create_timer return values");
+  module("create_timer return values", {
+    setup : function() {
+      this.stub_timer = jQueryChrono.create_timer(jQueryChrono.defaults.delay, 
+                                                  jQueryChrono.defaults.units,
+                                                  $.noop)
+    }
+  });
   
   test("expects a callback function", function() {
-    var timer = jQueryChrono.create_timer();
-    ok($.isFunction(timer.callback));
+    ok($.isFunction(this.stub_timer.callback));
   });
   
   test("expects a number for when the timer should run, that's > the default", function() {
-    var timer = jQueryChrono.create_timer();
-    strictEqual(typeof timer.when, "number");
-    ok(timer.when >= jQueryChrono.defaults.delay);
+    strictEqual(typeof this.stub_timer.when, "number");
+    ok(this.stub_timer.when >= jQueryChrono.defaults.delay);
   });
   
-  
+  module("arguments to create_timer");
+
+  test("must take 2 or 3 arguments", function() {
+    raises(function() {
+      jQueryChrono.create_timer();
+    }, "cannot accept no arguments");
+
+    raises(function() {
+      jQueryChrono.create_timer(50);
+    }, "cannot accept 1 argument");
+
+    function StubError() {};
+    raises(function() {
+      jQueryChrono.create_timer(50, $.noop);
+      throw new StubError();
+    }, StubError, "can accept 2 arguments");
+
+    raises(function() {
+      jQueryChrono.create_timer(50, "ms", $.noop);
+      throw new StubError();
+    }, StubError, "can accept 3 arguments");
+
+    raises(function() {
+      jQueryChrono.create_timer(50, "ms", $.noop, $.noop);
+    }, "cannot accept > 3 arguments");
+  });
 });
