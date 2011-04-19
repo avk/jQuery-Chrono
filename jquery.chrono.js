@@ -15,11 +15,18 @@
 })(jQuery);
 
 // Testable namespace for helpers
-var jQueryChrono = {
-  defaults : {
+var jQueryChrono = (function() {
+  var defaults = {
     delay: 4, // https://developer.mozilla.org/en/window.setTimeout#Minimum_delay_and_timeout_nesting
     units: "milliseconds"
-  },
+  }
   
-  create_timer : function() { return null; }
-}
+  function create_timer() {
+    return null;
+  }
+  
+  return {
+    defaults : defaults,
+    create_timer : create_timer
+  }
+})();
