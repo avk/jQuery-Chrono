@@ -20,4 +20,19 @@ $(function() {
     // https://developer.mozilla.org/en/window.setTimeout#Minimum_delay_and_timeout_nesting
     equals(jQueryChrono.defaults.units, "milliseconds");
   });
+  
+  module("create_timer return values");
+  
+  test("expects a callback function", function() {
+    var timer = jQueryChrono.create_timer();
+    ok($.isFunction(timer.callback));
+  });
+  
+  test("expects a number for when the timer should run, that's > the default", function() {
+    var timer = jQueryChrono.create_timer();
+    strictEqual(typeof timer.when, "number");
+    ok(timer.when >= jQueryChrono.defaults.delay);
+  });
+  
+  
 });

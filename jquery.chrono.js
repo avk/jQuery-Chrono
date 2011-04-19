@@ -6,11 +6,13 @@
 
 (function($) {
   $.after = function() {
-    return jQueryChrono.create_timer("after", arguments);
+    var timer = create_timer(arguments);
+    return setTimeout(timer.callback, timer.when);
   };
   
   $.every = function() {
-    return jQueryChrono.create_timer("every", arguments);
+    var timer = create_timer(arguments);
+    return setInterval(timer.callback, timer.when);
   }
 })(jQuery);
 
@@ -22,7 +24,10 @@ var jQueryChrono = (function() {
   }
   
   function create_timer() {
-    return null;
+    return {
+      when : defaults.delay,
+      callback : $.noop
+    }
   }
   
   return {
