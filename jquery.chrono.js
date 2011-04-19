@@ -56,7 +56,7 @@ var jQueryChrono = (function() {
       }
   
   function create_timer() {
-    var delay = null, units = null, closure = $.noop;
+    var delay = null, units = null, closure = null;
     
     if (arguments.length < 2 || arguments.length > 3) {
       $.error("jQuery.after and jQuery.every expect at least 2 and at most 3 arguments");
@@ -74,11 +74,38 @@ var jQueryChrono = (function() {
       
       // strips the number (possibly negative and/or not a whole number)
       units = arguments[0].replace(/-?\d+(\.\d+)?/, '');
-      if (units !== "" && !valid_units[units]) {
+      if (units === "") { // this argument is just digits
+        units = null;
+      } else if (!valid_units[units]) {
         $.error("jQuery.after and jQuery.every expect a valid time unit argument (e.g. ms, sec, etc.)");
       }
     } else {
       $.error("jQuery.after and jQuery.every expect a numerical first argument");
+    }
+    
+    if ($.isFunction(arguments[1])) {
+      closure = arguments[1];
+      if (units === null) { // first argument was just a number, no units
+        units = defaults.units;
+      }
+    } else if (typeof arguments[1] === "string") {
+      if (units === null) { // first argument was just a number, no units
+        units = arguments[1];
+      } else {
+        $.error("jQuery.after and jQuery.every expect only one time unit argument (e.g. ms, sec, etc.)");
+      }
+    } else {
+      $.error("jQuery.after and jQuery.every expect a function or a string as their second argument");
+    }
+    
+    if (closure === null) {
+      if ($.isFunction(arguments[2])) {
+        closure = arguments[2];
+      } else {
+        $.error("jQuery.after and jQuery.every expect one function as their last argument");
+      }
+    } else if ($.isFunction(arguments[2])) {
+      $.error("jQuery.after and jQuery.every expect one function as their last argument");
     }
     
     // 2. Validate the arguments
@@ -87,8 +114,12 @@ var jQueryChrono = (function() {
       delay = defaults.delay;
     }
     
+    if (!valid_units[units]) {
+      $.error("jQuery.after and jQuery.every expect a valid time unit argument (e.g. ms, sec, etc.)");
+    }
+    
     return {
-      when : delay,
+      when : delay * valid_units[units],
       callback : closure
     }
   }
