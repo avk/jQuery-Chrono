@@ -88,15 +88,15 @@ $(function() {
     
     delay = 27;
     timer = jQueryChrono.create_timer(delay, "ms", $.noop);
-    strictEqual(timer.when % delay, 0, "accepts integers");
+    strictEqual(timer.when / delay, 1, "accepts integers");
     
     delay = 57.5;
-    timer = jQueryChrono.create_timer(delay, "ms", $.noop);
-    strictEqual(timer.when / 1, delay, "accepts floats");
+    timer = jQueryChrono.create_timer(delay, "sec", $.noop);
+    strictEqual(timer.when / 1000, delay, "accepts floats");
     
     delay = "27";
-    timer = jQueryChrono.create_timer(delay + "ms", $.noop);
-    strictEqual(timer.when % parseInt(delay, 10), 0, "accepts integers in strings");
+    timer = jQueryChrono.create_timer(delay + "min", $.noop);
+    strictEqual(timer.when / parseInt(delay, 10), 60000, "accepts integers in strings");
     
     delay = "57.5";
     timer = jQueryChrono.create_timer(delay + "ms", $.noop);
