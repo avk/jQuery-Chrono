@@ -66,7 +66,7 @@ $(function() {
     });
   });
   
-  module("create_timer return values", {
+  module("create_timer function signature", {
     setup : function() {
       this.stub_timer = jQueryChrono.create_timer(jQueryChrono.defaults.delay, 
                                                   jQueryChrono.defaults.units,
@@ -74,18 +74,16 @@ $(function() {
     }
   });
   
-  test("expects a 'callback' function", function() {
+  test("returns a 'callback' function", function() {
     ok($.isFunction(this.stub_timer.callback));
   });
   
-  test("expects a number for 'when' the timer should run, that's > the default", function() {
+  test("returns a number for 'when' the timer should run, that's > the default", function() {
     strictEqual(typeof this.stub_timer.when, "number");
     ok(this.stub_timer.when >= jQueryChrono.defaults.delay);
   });
   
-  module("arguments to create_timer");
-
-  test("must take 2 or 3 arguments", function() {
+  test("accepts only 2 or 3 arguments", function() {
     raises(function() {
       jQueryChrono.create_timer();
     }, "cannot accept no arguments");
@@ -107,7 +105,9 @@ $(function() {
     }, "cannot accept > 3 arguments");
   });
   
-  test("first argument must be a number or a string", function() {
+  module("create_timer: first argument");
+
+  test("must be a number or a string", function() {
     raises(function() {
       jQueryChrono.create_timer($.noop, $.noop);
     });
@@ -128,12 +128,12 @@ $(function() {
     });
   });
   
-  test("if first argument is a number, it can't be less than default", function() {
+  test("if a number, it can't be less than the default delay", function() {
     var timer = jQueryChrono.create_timer(-7, $.noop);
     strictEqual(timer.when, jQueryChrono.defaults.delay);
   });
   
-  test("if first argument is a string, it must contain a number >= the default", function() {
+  test("if a string, it must contain a number >= the default delay", function() {
     var timer;
     
     raises(function() {
@@ -147,7 +147,7 @@ $(function() {
     strictEqual(timer.when, jQueryChrono.defaults.delay);
   });
   
-  test("first argument must be a factor of the 'when' returned value", function() {
+  test("must be a factor of the 'when' returned value", function() {
     var delay, timer;
     
     delay = 27;
@@ -167,12 +167,12 @@ $(function() {
     strictEqual(timer.when / 1, parseFloat(delay, 10), "accepts floats in strings");
   });
   
-  test("if first argument is a stringified number, it must use the default time unit", function() {
+  test("if a stringified number, it must use the default time unit", function() {
     var delay = "8", timer = jQueryChrono.create_timer(delay, $.noop);
     strictEqual(timer.when / parseInt(delay, 10), 1);
   });
   
-  test("if first argument is a string with non-numerical characters, it must contain a valid time unit", function() {
+  test("if a string with non-numerical characters, it must contain a valid time unit", function() {
     raises(function() {
       jQueryChrono.create_timer("6xxx", $.noop);
     });
