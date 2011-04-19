@@ -5,11 +5,11 @@
  */
 
 (function($) {
-  $.fn.after = function() {
+  $.after = function() {
     return jQueryChrono.create_timer("after", arguments);
-  }
+  };
   
-  $.fn.every = function() {
+  $.every = function() {
     return jQueryChrono.create_timer("every", arguments);
   }
 })(jQuery);
