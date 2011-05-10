@@ -1,13 +1,6 @@
 $(function() {
-  function doesNotRaise(callback, message) {
-    function StubError() {};
-    raises(function() {
-      callback();
-      throw new StubError();
-    }, StubError, message);
-  }
   
-  module("public interface");
+module("public interface");
   
   test("$.after is a valid function", function() {
     ok($.isFunction($.after));
@@ -17,273 +10,207 @@ $(function() {
     ok($.isFunction($.every));
   });
   
-  module("defaults");
+module("defaults");
   
   test("default delay should be 4", function() {
     // https://developer.mozilla.org/en/window.setTimeout#Minimum_delay_and_timeout_nesting
-    equals(jQueryChrono.defaults.delay, 4);
+    strictEqual(jQueryChrono.defaults.delay, 4);
   });
   
   test("default units should be milliseconds", function() {
     // https://developer.mozilla.org/en/window.setTimeout#Minimum_delay_and_timeout_nesting
-    equals(jQueryChrono.defaults.units, "milliseconds");
+    strictEqual(jQueryChrono.defaults.units, "milliseconds");
   });
   
-  module("units");
+module("units");
   
   test("must recognize milliseconds", function() {
     var units = ["millisecond", "milliseconds", "ms"];
     $.each(units, function(i, unit) {
-      ok(jQueryChrono.valid_units[unit], "recognizes " + unit);
+      strictEqual(jQueryChrono.valid_units[unit], 1, "recognizes " + unit);
     });
   });
   
   test("must recognize seconds", function() {
     var units = ["second", "seconds", "sec", "secs", "s"];
     $.each(units, function(i, unit) {
-      ok(jQueryChrono.valid_units[unit], "recognizes " + unit);
+      strictEqual(jQueryChrono.valid_units[unit], 1000, "recognizes " + unit);
     });
   });
   
   test("must recognize minutes", function() {
     var units = ["minute", "minutes", "min", "mins", "m"];
     $.each(units, function(i, unit) {
-      ok(jQueryChrono.valid_units[unit], "recognizes " + unit);
+      strictEqual(jQueryChrono.valid_units[unit], 1000 * 60, "recognizes " + unit);
     });
   });
   
   test("must recognize hours", function() {
     var units = ["hour", "hours", "hr", "hrs", "h"];
     $.each(units, function(i, unit) {
-      ok(jQueryChrono.valid_units[unit], "recognizes " + unit);
+      strictEqual(jQueryChrono.valid_units[unit], 1000 * 60 * 60, "recognizes " + unit);
     });
   });
   
   test("must recognize days", function() {
     var units = ["day", "days", "d"];
     $.each(units, function(i, unit) {
-      ok(jQueryChrono.valid_units[unit], "recognizes " + unit);
+      strictEqual(jQueryChrono.valid_units[unit], 1000 * 60 * 60 * 24, "recognizes " + unit);
     });
   });
   
-  module("create_timer function signature", {
-    setup : function() {
-      this.stub_timer = jQueryChrono.create_timer(jQueryChrono.defaults.delay, 
-                                                  jQueryChrono.defaults.units,
-                                                  $.noop)
-    }
+module("parsing arguments");
+  
+  test("accepts a positive integer as a delay", function() {
+    var delay = 50, fn = $.noop,
+        args = jQueryChrono.create_timer(delay, fn);
+    strictEqual(args.delay, delay);
   });
   
-  test("returns a 'callback' function", function() {
-    ok($.isFunction(this.stub_timer.callback));
+  test("accepts a positive float as a delay", function() {
+    var delay = 50.5, fn = $.noop,
+        args = jQueryChrono.create_timer(delay, fn);
+    strictEqual(args.delay, delay);
   });
   
-  test("returns a number for 'when' the timer should run", function() {
-    strictEqual(typeof this.stub_timer.when, "number");
+  test("does not accept non-numerical delays", function() {
+    var invalid_delays = [ [], true, NaN, "xyz", {}, $.noop, null ];
+    $.each(invalid_delays, function(i, invalid_delay) {
+      raises(function() {
+        jQueryChrono.create_timer(invalid_delay, $.noop);
+      }, invalid_delay + " is an invalid delay");
+    });
   });
   
-  test("numerical argument must be a factor of the 'when' returned value", function() {
-    var delay, timer;
-    
-    delay = 27;
-    timer = jQueryChrono.create_timer(delay, "ms", $.noop);
-    strictEqual(timer.when / delay, 1, "accepts integers");
-    
-    delay = 57.5;
-    timer = jQueryChrono.create_timer(delay, "sec", $.noop);
-    strictEqual(timer.when / 1000, delay, "accepts floats");
-    
-    delay = "27";
-    timer = jQueryChrono.create_timer(delay + "min", $.noop);
-    strictEqual(timer.when / parseInt(delay, 10), 60000, "accepts integers in strings");
-    
-    delay = "57.5";
-    timer = jQueryChrono.create_timer(delay + "ms", $.noop);
-    strictEqual(timer.when / 1, parseFloat(delay, 10), "accepts floats in strings");
+  test("does not accept invalid units", function() {
+    var invalid_units = [ 1997, [], true, NaN, "xyz", {}, $.noop, null ];
+    $.each(invalid_units, function(i, invalid_unit) {
+      raises(function() {
+        jQueryChrono.create_timer(5, invalid_unit, $.noop);
+      }, invalid_unit + " is an invalid unit");
+    });
   });
   
-  test("unit argument must be a factor of the 'when' returned value", function() {
-    var delay, timer;
-    
-    delay = 27;
-    timer = jQueryChrono.create_timer(delay, "s", $.noop);
-    strictEqual(timer.when / 1000, delay, "works as second argument");
-    
-    delay = "33.3";
-    timer = jQueryChrono.create_timer(delay + "min", $.noop);
-    strictEqual(timer.when / 60000, parseFloat(delay, 10), "works as first argument");
+  test("does not accept anything other than a function for a callback", function() {
+    var invalid_callbacks = [ 1997, [], true, NaN, "xyz", {}, null ];
+    $.each(invalid_callbacks, function(i, invalid_callback) {
+      raises(function() {
+        jQueryChrono.create_timer(5, invalid_callback);
+      }, invalid_callback + " is an invalid callback");
+    });
   });
   
-  test("accepts only 2 or 3 arguments", function() {
+module("parsing arguments: defaults");
+  
+  test("uses the default units if none provided", function() {
+    var delay = 50, fn = $.noop, 
+        args = jQueryChrono.create_timer(delay, fn);
+    strictEqual(args.units, jQueryChrono.defaults.units);
+  });
+  
+  test("uses the default delay if the delay < the default delay and the units are the default units", function() {
+    var delay = jQueryChrono.defaults.delay - 1, 
+        units = jQueryChrono.defaults.units, 
+        fn = $.noop,
+        args = jQueryChrono.create_timer(delay, units, fn);
+    strictEqual(args.delay, jQueryChrono.defaults.delay);
+  });
+  
+  test("does not use the default delay if the delay < the default delay but the units are NOT the default units", function() {
+    var delay = jQueryChrono.defaults.delay - 1, 
+        units = "days", 
+        fn = $.noop,
+        args = jQueryChrono.create_timer(delay, units, fn);
+    strictEqual(args.delay, delay);
+  });
+  
+  test("uses the default delay and default units given a negative integer delay", function() {
+    var delay = -50, units = "days", fn = $.noop,
+        args = jQueryChrono.create_timer(delay, units, fn);
+    strictEqual(args.delay, jQueryChrono.defaults.delay);
+    strictEqual(args.units, jQueryChrono.defaults.units);
+  });
+  
+  test("uses the default delay and default units given a negative float delay", function() {
+    var delay = -50.5, units = "hours", fn = $.noop,
+        args = jQueryChrono.create_timer(delay, units, fn);
+    strictEqual(args.delay, jQueryChrono.defaults.delay);
+    strictEqual(args.units, jQueryChrono.defaults.units);
+  });
+  
+module("valid arguments");
+  
+  test("does not accept < 2 arguments", function() {
     raises(function() {
-      jQueryChrono.create_timer();
-    }, "cannot accept no arguments");
-
+      jQueryChrono.create_timer($.noop);
+    });
+  });
+  
+  test("does not accept > 3 arguments", function() {
     raises(function() {
-      jQueryChrono.create_timer(50);
-    }, "cannot accept 1 argument");
-
-    doesNotRaise(function() {
-      jQueryChrono.create_timer(50, $.noop);
-    }, "can accept 2 arguments");
-
-    doesNotRaise(function() {
-      jQueryChrono.create_timer(50, "ms", $.noop);
-    }, "can accept 3 arguments");
-
-    raises(function() {
-      jQueryChrono.create_timer(50, "ms", $.noop, $.noop);
-    }, "cannot accept > 3 arguments");
-  });
-  
-  module("create_timer: 1st argument");
-
-  test("must be a number or a string", function() {
-    raises(function() {
-      jQueryChrono.create_timer($.noop, $.noop);
-    });
-    
-    raises(function() {
-      jQueryChrono.create_timer(true, $.noop);
-    });
-    
-    doesNotRaise(function() {
-      jQueryChrono.create_timer(50, $.noop);
-      jQueryChrono.create_timer(50.2, $.noop);
-    });
-    
-    doesNotRaise(function() {
-      jQueryChrono.create_timer("50", $.noop);
-      jQueryChrono.create_timer("50.2", $.noop);
-      jQueryChrono.create_timer("50.2ms", $.noop);
+      jQueryChrono.create_timer(5, "s", $.noop, $.noop);
     });
   });
   
-  test("if numerical argument <= the default delay, return default delay", function() {
-    var timer;
-    timer = jQueryChrono.create_timer(1, $.noop);
-    strictEqual(timer.when, jQueryChrono.defaults.delay);
-    
-    timer = jQueryChrono.create_timer(-7, $.noop);
-    strictEqual(timer.when, jQueryChrono.defaults.delay);
-    
-    timer = jQueryChrono.create_timer(-50.2, $.noop);
-    strictEqual(timer.when, jQueryChrono.defaults.delay);
-    
-    timer = jQueryChrono.create_timer("-37", $.noop);
-    strictEqual(timer.when, jQueryChrono.defaults.delay);
-    
-    timer = jQueryChrono.create_timer("-50ms", $.noop);
-    strictEqual(timer.when, jQueryChrono.defaults.delay);
+  test("accepts a delay and a callback", function() {
+    var delay = 50, fn = $.noop, units = jQueryChrono.defaults.units,
+        args = jQueryChrono.create_timer(delay, fn);
+    strictEqual(args.delay, delay, "recognizes delay");
+    strictEqual(args.units, units, "recognizes unit");
+    strictEqual(args.callback, fn, "recognizes function");
   });
   
-  test("if a string, it must start with a number", function() {
-    raises(function() {
-      jQueryChrono.create_timer("abc", $.noop);
-    });
+  test("accepts a delay string and a callback", function() {
+    var delay = 50, fn = $.noop, units = jQueryChrono.defaults.units,
+        args = jQueryChrono.create_timer(delay.toString(), fn);
+    strictEqual(args.delay, delay, "recognizes delay");
+    strictEqual(args.units, units, "recognizes unit");
+    strictEqual(args.callback, fn, "recognizes function");
+  });
+  
+  test("accepts a delay string with a unit and a callback", function() {
+    var delay = 50, units = "s", fn = $.noop,
+        args = jQueryChrono.create_timer(delay + units, fn);
+    strictEqual(args.delay, delay, "recognizes delay");
+    strictEqual(args.units, units, "recognizes unit");
+    strictEqual(args.callback, fn, "recognizes function");
+  });
+  
+  test("accepts a delay followed by a unit and a callback", function() {
+    var delay = 50, units = "s", fn = $.noop,
+        args = jQueryChrono.create_timer(delay, units, fn);
+    strictEqual(args.delay, delay, "recognizes delay");
+    strictEqual(args.units, units, "recognizes unit");
+    strictEqual(args.callback, fn, "recognizes function");
+  });
+  
+  test("accepts a delay string followed by a unit and a callback", function() {
+    var delay = 50, units = "s", fn = $.noop,
+        args = jQueryChrono.create_timer(delay.toString(), units, fn);
+    strictEqual(args.delay, delay, "recognizes delay");
+    strictEqual(args.units, units, "recognizes unit");
+    strictEqual(args.callback, fn, "recognizes function");
+  });
+  
+module("timer calculation");
+  
+  test("returns a number for when the new timer should run at", function() {
+    var timer = jQueryChrono.create_timer(jQueryChrono.defaults.delay, $.noop);
+    strictEqual(typeof timer.when, "number");
+  });
+  
+  test("delay must be a factor of when the new timer should run", function() {
+    var delay = 423.8, units = 'sec', fn = $.noop,
+        timer = jQueryChrono.create_timer(delay, units, fn);
     
-    raises(function() {
-      jQueryChrono.create_timer("x50x", $.noop);
-    });
+    strictEqual(timer.when / parseFloat(jQueryChrono.valid_units[units], 10), delay);
+  });
+  
+  test("units must be a factor of when the new timer should run", function() {
+    var delay = 757, units = 'hour', fn = $.noop,
+        timer = jQueryChrono.create_timer(delay, units, fn);
     
-    doesNotRaise(function() {
-      jQueryChrono.create_timer("50", $.noop);
-      jQueryChrono.create_timer("-49.2ms", $.noop);
-    });
+    strictEqual(timer.when / parseFloat(delay, 10), jQueryChrono.valid_units[units]);
   });
   
-  test("if a string with non-numerical characters, it must contain a valid time unit", function() {
-    raises(function() {
-      jQueryChrono.create_timer("6xxx", $.noop);
-    });
-    
-    doesNotRaise(function() {
-      jQueryChrono.create_timer("9sec", $.noop);
-    });
-  });
-  
-  module("create_timer: 2nd argument");
-  
-  test("must be a function or a string", function() {
-    raises(function() {
-      jQueryChrono.create_timer(5, 50, $.noop);
-    });
-    
-    raises(function() {
-      jQueryChrono.create_timer(5, true, $.noop);
-    });
-    
-    doesNotRaise(function() {
-      jQueryChrono.create_timer(5, $.noop);
-    });
-    
-    doesNotRaise(function() {
-      jQueryChrono.create_timer(5, "ms", $.noop);
-      jQueryChrono.create_timer(5, "seconds", $.noop);
-      jQueryChrono.create_timer(5, "hour", $.noop);
-    });
-  });
-  
-  test("if function, return it as callback", function() {
-    var fn = function() {}, timer = jQueryChrono.create_timer(5, fn);
-    strictEqual(timer.callback, fn);
-  });
-  
-  test("if function and units weren't in first argument, use default time unit", function() {
-    var delay = 5, timer = jQueryChrono.create_timer(delay, $.noop);
-    strictEqual(timer.when / delay, 1);
-  });
-  
-  test("if function and units were in first argument, don't use default time unit", function() {
-    var delay = 13, timer = jQueryChrono.create_timer(delay + "min", $.noop);
-    strictEqual(timer.when / 60000, delay);
-  });
-  
-  test("if string, must be a valid time unit", function() {
-    raises(function() {
-      jQueryChrono.create_timer(5, "xxx", $.noop);
-    });
-    
-    doesNotRaise(function() {
-      jQueryChrono.create_timer(5, "sec", $.noop);
-    });
-  });
-  
-  test("if units were in first argument, must not be a string", function() {
-    raises(function() {
-      jQueryChrono.create_timer("5ms", "sec", $.noop);
-    });
-  });
-  
-  test("if units were not in first argument, must be set here", function() {
-    var timer = jQueryChrono.create_timer("11", "sec", $.noop);
-    strictEqual(timer.when / 11, 1000);
-  });
-  
-  module("create_timer: 3rd argument");
-  
-  test("must be a function", function() {
-    raises(function() {
-      jQueryChrono.create_timer(5, "sec", "nope");
-    });
-    
-    doesNotRaise(function() {
-      jQueryChrono.create_timer(7, "min", $.noop);
-    });
-  });
-  
-  test("if function, return it as callback", function() {
-    var fn = function() {}, timer = jQueryChrono.create_timer(9, 'hours', fn);
-    strictEqual(timer.callback, fn);
-  });
-  
-  test("if function was in second argument, must not be set", function() {
-    raises(function() {
-      var fn = function() {}, timer = jQueryChrono.create_timer(9, fn, fn);
-    });
-    
-    doesNotRaise(function() {
-      var fn = function() {}, timer = jQueryChrono.create_timer(9, fn);
-    });
-  });
 });
