@@ -7,6 +7,9 @@
  * @version 1.0
  */
 
+/*global jQuery, $ */ 
+var jQueryChrono;
+
 /**
  * The extended jQuery library
  * @name jQuery
@@ -49,12 +52,12 @@
     var timer = jQueryChrono.create_timer(arguments);
     return setInterval(timer.callback, timer.when);
   };
-})(jQuery);
+}(jQuery));
 
 /**
  * @namespace Testable namespace for helpers
  */
-var jQueryChrono = (function() {
+jQueryChrono = (function() {
   /**
    * Reasonable defaults (delay: 4, units: ms), based on how Mozilla works with timers:
    * https://developer.mozilla.org/en/window.setTimeout#Minimum_delay_and_timeout_nesting
@@ -106,7 +109,7 @@ var jQueryChrono = (function() {
         "day"         : day,
         "days"        : day,
         "d"           : day
-      }
+      };
   
   /**
    * Parses a numerical delay from the given arguments.
@@ -210,7 +213,7 @@ var jQueryChrono = (function() {
         units : null,
         when : null,
         callback : null
-      }
+      };
     
       if (arguments.length < 2 || arguments.length > 3) {
         $.error("$.after and $.every - Accept only 2 or 3 arguments");
@@ -233,5 +236,5 @@ var jQueryChrono = (function() {
     
       return parsed;
     }
-  }
-})();
+  };
+}());
