@@ -36,7 +36,7 @@ var jQueryChrono;
    * (See full list of valid time units: {@link jQueryChrono-valid_units})
    */
   $.after = function() {
-    var timer = jQueryChrono.create_timer(arguments);
+    var timer = jQueryChrono.create_timer.apply(this, arguments);
     return setTimeout(timer.callback, timer.when);
   };
   
@@ -49,7 +49,7 @@ var jQueryChrono;
    * Supports the same syntax and arguments as {@link jQuery.after}
    */
   $.every = function() {
-    var timer = jQueryChrono.create_timer(arguments);
+    var timer = jQueryChrono.create_timer.apply(this, arguments);
     return setInterval(timer.callback, timer.when);
   };
 }(jQuery));
