@@ -1,15 +1,5 @@
 $(function() {
   
-module("public interface");
-  
-  test("$.after is a valid function", function() {
-    ok($.isFunction($.after));
-  });
-  
-  test("$.every is a valid function", function() {
-    ok($.isFunction($.every));
-  });
-  
 module("defaults");
   
   test("default delay should be 4", function() {
@@ -211,6 +201,66 @@ module("timer calculation");
         timer = jQueryChrono.create_timer(delay, units, fn);
     
     strictEqual(timer.when / parseFloat(delay, 10), jQueryChrono.valid_units[units]);
+  });
+  
+module("public interface");
+  
+  test("$.after is a valid function", function() {
+    ok($.isFunction($.after));
+  });
+  
+  test("$.every is a valid function", function() {
+    ok($.isFunction($.every));
+  });
+  
+  test("can create a one-time timer with $.after", function() {
+    var milliseconds = 10,
+        html = "test data set by $.after";
+
+    expect(1);
+
+    // sets fixture to value of "html"
+    $.after(milliseconds, function() {
+      $("#qunit-fixture").html(html);
+    });
+
+    QUnit.stop(); // wait for all timers to finish
+
+    // checks that fixture is set to value of "html"
+    setTimeout(function() {
+      deepEqual($("#qunit-fixture").html(), html);
+
+      QUnit.start(); // all timers have finished
+    }, milliseconds + 1); // check shortly after $.after completes
+  });
+  
+  test("can create an interval timer with $.every", function() {
+    var milliseconds = 7,
+        interval = null,
+        iterations = 3,
+        current_iteration = 1;
+
+    expect(1);
+
+    // appends number of milliseconds to fixture, "iterations" times
+    interval = $.every(milliseconds, function() {
+      $("#qunit-fixture").append(milliseconds.toString());
+
+      if (current_iteration === iterations) {
+        clearInterval(interval);
+      }
+      current_iteration += 1;
+    });
+
+    QUnit.stop(); // wait for all timers to finish
+
+    // checks that milliseconds appears exactly "iterations" times in fixture
+    setTimeout(function() {
+      var pattern = new RegExp("^"+ milliseconds +"{"+ iterations +"}$");
+      ok(pattern.test($("#qunit-fixture").html()));
+
+      QUnit.start(); // all timers have finished
+    }, (milliseconds + 1) * iterations); // check shortly after $.every completes
   });
   
 });
