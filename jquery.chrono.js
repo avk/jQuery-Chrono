@@ -34,11 +34,12 @@ var jQueryChrono;
    * <strong>millisecond, second, minute, hour, & day</strong><br />
    * along with all their common abbreviations and pluralizations.<br />
    * (See full list of valid time units: {@link jQueryChrono-valid_units})
+   * @name jQuery.after
    */
-  $.after = function() {
+  function after() {
     var timer = jQueryChrono.create_timer.apply(this, arguments);
     return setTimeout(timer.callback, timer.when);
-  };
+  }
   
   /**
    * Syntactic sugar for setTimeout.
@@ -47,11 +48,17 @@ var jQueryChrono;
    *    $.every(5, "minutes", function() { ... });
    * </pre>
    * Supports the same syntax and arguments as {@link jQuery.after}
+   * @name jQuery.every
    */
-  $.every = function() {
+  function every() {
     var timer = jQueryChrono.create_timer.apply(this, arguments);
     return setInterval(timer.callback, timer.when);
-  };
+  }
+  
+  $.extend({
+    after : after,
+    every : every
+  });
 }(jQuery));
 
 /**
