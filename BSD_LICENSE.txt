@@ -1,4 +1,5 @@
-Copyright (c) 2011, Arthur Klepchukov (arthur.klepchukov@gmail.com)
+Copyright (c) 2011, Jarvis Badgley (chipersoft@gmail.com)
+                    Arthur Klepchukov (arthur.klepchukov@gmail.com)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

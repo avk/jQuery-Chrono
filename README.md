@@ -1,7 +1,7 @@
-jQuery Chrono plugin
+Timed
 ====================
 
-jQuery Chrono provides syntactic sugar around JavaScript's native 
+Timed provides syntactic sugar around JavaScript's native 
 `setTimeout` and `setInterval` functions.
 
 To execute some code in 5 minutes, instead of writing:
@@ -19,10 +19,10 @@ or the slightly more readable:
 now you can just write:
 
 ```js
-    $.after(5, "minutes", function() { ... }); // :)
+    Timed.after(5, "minutes", function() { ... }); // :)
 ````
 
-`setTimeout` becomes `$.after` and `setInterval` becomes `$.every`.
+`setTimeout` becomes `Timed.after` and `setInterval` becomes `Timed.every`.
 
 Usage
 -----
@@ -30,14 +30,19 @@ Usage
 These are all valid calls:
 
 ```js
-    $.after(100, function() { ... });           // 100 milliseconds
-    $.after("9.7", function() { ... });         // 9.7 milliseconds
-    $.after("50sec", function() { ... });       // 50 seconds
-    $.after(7, "mins", function() { ... });     // 7 minutes
-    $.after("33", "hours", function() { ... }); // 33 hours
+    Timed.after(100, function() { ... });           // 100 milliseconds
+    Timed.after("9.7", function() { ... });         // 9.7 milliseconds
+    Timed.after("50sec", function() { ... });       // 50 seconds
+    Timed.after(7, "mins", function() { ... });     // 7 minutes
+    Timed.after("33", "hours", function() { ... }); // 33 hours
+    Timed.after([
+    	["1", "minute"],
+    	[34, "seconds"],
+    	[100, "milliseconds"]
+    ], function() { ... });
 ```
 
-`$.every`, for creating intervals, has the same exact syntax as `$.after`.
+`Timed.every`, for creating intervals, has the same exact syntax as `$.after`.
 
 Valid time units include:  
 
@@ -58,4 +63,4 @@ Meta
 
 _Licensed under the 3-clause **BSD license** (BSD_LICENSE.txt)_
 
-Copyright (c) 2011, Arthur Klepchukov (at gmail)
+Copyright (c) 2011, Jarvis Badgley (chipersoft at gmail), Arthur Klepchukov (at gmail)
