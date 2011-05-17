@@ -260,7 +260,7 @@ module("public interface");
       ok(pattern.test($("#qunit-fixture").html()));
 
       QUnit.start(); // all timers have finished
-    }, (milliseconds + 1) * iterations); // check shortly after $.every completes
+    }, (milliseconds) * (iterations + 3)); // check shortly after $.every completes
   });
   
 });
