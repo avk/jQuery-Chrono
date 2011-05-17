@@ -89,7 +89,7 @@
 			
 			for (name in arguments[0]) {
 				timer = create_timer.apply(this, [arguments[0][name][0], arguments[0][name][1], parsed.callback]);
-				parsed.delay += timer.delay;
+				parsed.delay += timer.when;
 			}
 		} else {
 			//parse delay field
