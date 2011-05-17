@@ -33,8 +33,11 @@ These are all valid calls:
     $.after(100, function() { ... });           // 100 milliseconds
     $.after("9.7", function() { ... });         // 9.7 milliseconds
     $.after("50sec", function() { ... });       // 50 seconds
+    $.after("1 minute", function() { ... });       // 1 minute
     $.after(7, "mins", function() { ... });     // 7 minutes
     $.after("33", "hours", function() { ... }); // 33 hours
+    $.after("1 hour, 2 minutes, 15 seconds", function() { ... }); // 1:02:15 hours
+    $.after("1min, 15 s", function() { ... }); // 1:15 minutes
 ```
 
 `$.every`, for creating intervals, has the same exact syntax as `$.after`.
