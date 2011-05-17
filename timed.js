@@ -70,49 +70,61 @@
 			units : null,
 			when : null,
 			callback : null
-		}, ac = arguments.length;
+		}, ac = arguments.length,
+			name,
+			timer;
 	
-		if (ac < 2 || ac > 3) throw ("Timed.after and Timed.every - Accept only 2 or 3 arguments");
+		if ( (ac < 2) || ac > 3) throw ("Timed.after and Timed.every - Accept only 2 or 3 arguments");
 		
 		
 		//parse callback function
 		parsed.callback = arguments[ac - 1];
 		if (typeof parsed.callback !== 'function') throw ("Timed.after and Timed.every - Require a callback as the last argument");
 		
+		
+		//if the first arg is an array, run this function on each item and return the value, else do normal arg calls
+		if (arguments[0] instanceof Array) {
+			//create a baseline for the units
+			parsed.units = 'milliseconds';
+			
+			for (name in arguments[0]) {
+				timer = create_timer.apply(this, [arguments[0][name].delay, arguments[0][name].units, parsed.callback]);
+				parsed.delay += timer.delay;
+			}
+		} else {
+			//parse delay field
+			parsed.delay = (typeof arguments[0] === "string") ? parseFloat(arguments[0], 10) : arguments[0];
+			if (typeof parsed.delay !== "number" || isNaN(parsed.delay)) throw ("Timed.after and Timed.every - Require a numerical delay as the 1st argument");
 	
 	
-		//parse delay field
-		parsed.delay = (typeof arguments[0] === "string") ? parseFloat(arguments[0], 10) : arguments[0];
-		if (typeof parsed.delay !== "number" || isNaN(parsed.delay)) throw ("Timed.after and Timed.every - Require a numerical delay as the 1st argument");
-
-
-
-		//parse units field
-		if (typeof arguments[0] === "string" && parsed.delay !== null) { //find units in "50sec" style delays
-			parsed.units = arguments[0].replace(/[^a-z]*/, "") || null;
-		}
-		if (typeof arguments[1] === "string") {
-			parsed.units = arguments[1];
-		}
-		if (parsed.units === null && ac === 2) { // no units specified
-			parsed.units = defaults.units;
+	
+			//parse units field
+			if (typeof arguments[0] === "string" && parsed.delay !== null) { //find units in "50sec" style delays
+				parsed.units = arguments[0].replace(/[^a-z]*/, "") || null;
+			}
+			if (typeof arguments[1] === "string") {
+				parsed.units = arguments[1];
+			}
+			if (parsed.units === null && ac === 2) { // no units specified
+				parsed.units = defaults.units;
+			}
+			
+			if (typeof valid_units[parsed.units] !== "number") throw ("Timed.after and Timed.every - Require a valid unit of time as the 2nd argument");		
+	
+	
+		
+			// Reset to defaults, if necessary
+			if (parsed.delay < defaults.delay && parsed.units === defaults.units) {
+				parsed.delay = defaults.delay;
+			}
+			if (parsed.delay < 0) {
+				parsed.delay = defaults.delay;
+				parsed.units = defaults.units;
+			}
 		}
 		
-		if (typeof valid_units[parsed.units] !== "number") throw ("Timed.after and Timed.every - Require a valid unit of time as the 2nd argument");		
-
-
-	
-		// Reset to defaults, if necessary
-		if (parsed.delay < defaults.delay && parsed.units === defaults.units) {
-			parsed.delay = defaults.delay;
-		}
-		if (parsed.delay < 0) {
-			parsed.delay = defaults.delay;
-			parsed.units = defaults.units;
-		}
-	
 		parsed.when = parsed.delay * valid_units[parsed.units];
-	
+		
 		return parsed;
 	}
 	
