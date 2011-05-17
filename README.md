@@ -35,6 +35,11 @@ These are all valid calls:
     Timed.after("50sec", function() { ... });       // 50 seconds
     Timed.after(7, "mins", function() { ... });     // 7 minutes
     Timed.after("33", "hours", function() { ... }); // 33 hours
+    Timed.after([
+    	["1", "minute"],
+    	[34, "seconds"],
+    	[100, "milliseconds"]
+    ], function() { ... });
 ```
 
 `Timed.every`, for creating intervals, has the same exact syntax as `$.after`.
