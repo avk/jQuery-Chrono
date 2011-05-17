@@ -88,7 +88,7 @@
 			parsed.units = 'milliseconds';
 			
 			for (name in arguments[0]) {
-				timer = create_timer.apply(this, [arguments[0][name].delay, arguments[0][name].units, parsed.callback]);
+				timer = create_timer.apply(this, [arguments[0][name][0], arguments[0][name][1], parsed.callback]);
 				parsed.delay += timer.delay;
 			}
 		} else {
