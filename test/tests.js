@@ -183,18 +183,18 @@ module("valid arguments");
   });
   
   test("accepts a delay and a unit in a string without a space followed by a callback", function() {
-    var delay = '50sec', fn = $.noop,
-        args = jQueryChrono.create_timer(delay, fn);
-    strictEqual(args.delay, 50, "recognizes delay");
-    strictEqual(args.units, 'sec', "recognizes unit");
+    var delay = 50, units = 'sec', fn = $.noop,
+        args = jQueryChrono.create_timer(delay.toString() + units, fn);
+    strictEqual(args.delay, delay, "recognizes delay");
+    strictEqual(args.units, units, "recognizes unit");
     strictEqual(args.callback, fn, "recognizes function");
   });
   
   test("accepts a delay and a unit in a string with a space followed by a callback", function() {
-    var delay = '50 sec', fn = $.noop,
-        args = jQueryChrono.create_timer(delay, fn);
-    strictEqual(args.delay, 50, "recognizes delay");
-    strictEqual(args.units, 'sec', "recognizes unit");
+    var delay = 50, units = 'sec', fn = $.noop,
+        args = jQueryChrono.create_timer(delay + " " + units, fn);
+    strictEqual(args.delay, delay, "recognizes delay");
+    strictEqual(args.units, units, "recognizes unit");
     strictEqual(args.callback, fn, "recognizes function");
   });
   
