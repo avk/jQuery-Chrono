@@ -198,12 +198,57 @@ module("valid arguments");
     strictEqual(args.callback, fn, "recognizes function");
   });
   
-  test("accepts a sequence of comma-separated delays with units in a string followed by a callback", function() {
+module("valid arguments: comma-separated delays with units");
+  
+  test("accepts a sequence followed by a callback as a delay of minimum units", function() {
     var delay = '2 hours, 1 minute, 50 seconds', fn = $.noop,
         args = jQueryChrono.create_timer(delay, fn);
     strictEqual(args.delay, 7310, "recognizes delay");
     strictEqual(args.units, 'seconds', "recognizes unit");
     strictEqual(args.callback, fn, "recognizes function");
+  });
+  
+  test("tolerates a sequence followed by anything other than a callback", function() {
+    var delay = '5 hours, 36 minutes', fn = $.noop,
+        args = jQueryChrono.create_timer(delay, "randomness", fn);
+    strictEqual(args.delay, 336, "recognizes delay");
+    strictEqual(args.units, 'minutes', "recognizes unit");
+    strictEqual(args.callback, fn, "recognizes function");
+  });
+  
+  test("does not accept a sequence with empty values at the end", function() {
+    var delay = '5 hours, 36 minutes,', fn = $.noop;
+    raises(function() {
+      args = jQueryChrono.create_timer(delay, fn);
+    });
+  });
+  
+  test("does not accept a sequence with empty values at the beginning", function() {
+    var delay = ',5 hours, 36 minutes', fn = $.noop;
+    raises(function() {
+      args = jQueryChrono.create_timer(delay, fn);
+    });
+  });
+  
+  test("does not accept sequence of delays with invalid units", function() {
+    var delay = '3 hours, 36 xom', fn = $.noop;
+    raises(function() {
+      jQueryChrono.create_timer(delay, fn);
+    });
+  });
+  
+  test("does not accept sequence of delays without units", function() {
+    var delay = '3, 36', fn = $.noop;
+    raises(function() {
+      jQueryChrono.create_timer(delay, fn);
+    });
+  });
+  
+  test("does not accept sequence of units without delays", function() {
+    var delay = 'min, sec', fn = $.noop;
+    raises(function() {
+      jQueryChrono.create_timer(delay, fn);
+    });
   });
   
 module("timer calculation");
