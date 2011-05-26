@@ -54,6 +54,17 @@ Valid time units include:
 
 along with all their common abbreviations and pluralizations.
 
+Contributing
+------------
+
+* Add relevant QUnit tests and make sure all existing tests pass (in __tests/tests.js__)
+
+* Update the JsDoc (__doc/__) with:
+  java -jar tools/jsdoc-toolkit/jsrun.jar tools/jsdoc-toolkit/app/run.js -a -t=tools/jsdoc-toolkit/templates/jsdoc/ -d=doc/ lib/jquery.chrono.js
+
+* Update the minified file (__lib/jquery.chrono.min.js__) with:
+  java -jar tools/yuicompressor-2.4.6/build/yuicompressor-2.4.6.jar -o lib/jquery.chrono.min.js lib/jquery.chrono.js
+
 Meta
 ----
 
