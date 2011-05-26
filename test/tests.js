@@ -81,6 +81,15 @@ module("parsing arguments");
     });
   });
   
+  test("does not accept invalid units without a delay", function() {
+    var invalid_units = [ [], true, NaN, "xyz", {}, $.noop, null ];
+    $.each(invalid_units, function(i, invalid_unit) {
+      raises(function() {
+        jQueryChrono.create_timer(invalid_unit, $.noop);
+      }, invalid_unit + " is an invalid unit");
+    });
+  });
+  
   test("does not accept anything other than a function for a callback", function() {
     var invalid_callbacks = [ 1997, [], true, NaN, "xyz", {}, null ];
     $.each(invalid_callbacks, function(i, invalid_callback) {
@@ -96,6 +105,18 @@ module("parsing arguments: defaults");
     var delay = 50, fn = $.noop, 
         args = jQueryChrono.create_timer(delay, fn);
     strictEqual(args.units, jQueryChrono.defaults.units);
+  });
+  
+  test("uses the default delay if none provided and units are ms", function() {
+    var units = "ms", fn = $.noop, 
+        args = jQueryChrono.create_timer(units, fn);
+    strictEqual(args.delay, jQueryChrono.defaults.delay);
+  });
+  
+  test("uses 1 instead of the default delay if none provided but units are not ms", function() {
+    var delay = 1, units = "mins", fn = $.noop, 
+        args = jQueryChrono.create_timer(units, fn);
+    strictEqual(args.delay, delay);
   });
   
   test("uses the default delay if the delay < the default delay and the units are the default units", function() {
@@ -153,6 +174,14 @@ module("valid arguments");
   test("accepts a delay string and a callback", function() {
     var delay = 50, fn = $.noop, units = jQueryChrono.defaults.units,
         args = jQueryChrono.create_timer(delay.toString(), fn);
+    strictEqual(args.delay, delay, "recognizes delay");
+    strictEqual(args.units, units, "recognizes unit");
+    strictEqual(args.callback, fn, "recognizes function");
+  });
+  
+  test("accepts a unit and a callback", function() {
+    var delay = 1, units = "minute", fn = $.noop,
+        args = jQueryChrono.create_timer(units, fn);
     strictEqual(args.delay, delay, "recognizes delay");
     strictEqual(args.units, units, "recognizes unit");
     strictEqual(args.callback, fn, "recognizes function");
