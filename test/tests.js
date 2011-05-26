@@ -182,6 +182,14 @@ module("valid arguments");
     strictEqual(args.callback, fn, "recognizes function");
   });
   
+  test("accepts a only unit and a callback", function() {
+    var delay = 1, units = "minute", fn = $.noop,
+        args = jQueryChrono.create_timer(units, fn);
+    strictEqual(args.delay, delay, "recognizes delay");
+    strictEqual(args.units, units, "recognizes unit");
+    strictEqual(args.callback, fn, "recognizes function");
+  });
+  
 module("timer calculation");
   
   test("returns a number for when the new timer should run at", function() {
