@@ -57,6 +57,11 @@ Valid time units include:
 
 along with all their common abbreviations and pluralizations.
 
+jQuery Version
+--------------
+
+This project works with jQuery 1.4+ (see __test/test.html__).
+
 Contributing
 ------------
 
