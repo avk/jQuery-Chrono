@@ -1,5 +1,5 @@
-jQuery Chrono plugin
-====================
+jQuery Chrono plugin (version 1.1)
+==================================
 
 jQuery Chrono provides syntactic sugar around JavaScript's native 
 `setTimeout` and `setInterval` functions.
