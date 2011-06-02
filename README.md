@@ -65,7 +65,7 @@ This project works with jQuery 1.4+ (see __test/test.html__).
 Contributing
 ------------
 
-* Add relevant QUnit tests and make sure all existing tests pass (in __tests/tests.js__)
+* Add relevant QUnit tests and make sure all existing tests pass (in __test/tests.js__)
 
 * Update the JsDoc (__doc/__) with:
 
