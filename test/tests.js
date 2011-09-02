@@ -311,6 +311,14 @@ module("public interface");
     ok($.isFunction($.every));
   });
   
+  test("jQueryChrono.after is a valid function", function() {
+    ok(jQueryChrono.after === $.after);
+  });
+  
+  test("jQueryChrono.every is a valid function", function() {
+    ok(jQueryChrono.every === $.every);
+  });
+  
   test("can create a one-time timer with $.after", function() {
     var milliseconds = 10,
         html = "test data set by $.after";

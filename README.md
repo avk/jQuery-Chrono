@@ -62,6 +62,9 @@ jQuery Version
 
 This project works with jQuery 1.4+ (see __test/test.html__).
 
+If yoou haven’t jQuery, you can use aliases `jQueryChrono.every` and
+`jQueryChrono.after`.
+
 Contributing
 ------------
 
