@@ -24,6 +24,9 @@ now you can just write:
 
 `setTimeout` becomes `$.after` and `setInterval` becomes `$.every`.
 
+If you don't have jQuery, you can use the aliases `jQueryChrono.every` and
+`jQueryChrono.after`.
+
 Usage
 -----
 
@@ -61,9 +64,6 @@ jQuery Version
 --------------
 
 This project works with jQuery 1.4+ (see __test/test.html__).
-
-If yoou haven’t jQuery, you can use aliases `jQueryChrono.every` and
-`jQueryChrono.after`.
 
 Contributing
 ------------
