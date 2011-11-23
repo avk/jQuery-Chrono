@@ -1,4 +1,4 @@
-jQuery Chrono plugin (version 1.1)
+jQuery Chrono plugin (version 1.2)
 ==================================
 
 jQuery Chrono provides syntactic sugar around JavaScript's native 
@@ -63,7 +63,7 @@ along with all their common abbreviations and pluralizations.
 jQuery Version
 --------------
 
-This project works with jQuery 1.4+ (see __test/test.html__).
+This project works with jQuery 1.4+ (see __test/test.html__) but as of version 1.2, also works without jQuery.
 
 Contributing
 ------------
